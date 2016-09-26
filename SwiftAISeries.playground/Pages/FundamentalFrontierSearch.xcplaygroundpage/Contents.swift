@@ -1,4 +1,4 @@
-//: SWIFT 2a: Fundamental Frontier Seach Algorithm
+//: SWIFT: Frontier Seach Algorithm
 
 import Foundation
 
@@ -21,8 +21,20 @@ class Node {
 
 /// MARK: Helper functions
 
-func pickPath(paths: inout [Path]) -> Path {
-	return paths.removeFirst()
+protocol SearchStrategy {
+	static func pickPath(paths: inout [Path]) -> Path
+}
+
+class DFS: SearchStrategy {
+	static func pickPath(paths: inout [Path]) -> Path {
+		return paths.removeLast()
+	}
+}
+
+class BFS: SearchStrategy {
+	static func pickPath(paths: inout [Path]) -> Path {
+		return paths.removeFirst()
+	}
 }
 
 func hasGoal(solution: Node.Data, path: Path) -> Bool {
@@ -50,7 +62,7 @@ func search(query: Node.Data, startingNode: Node) -> Path {
 	frontier.append(path)
 
 	while !frontier.isEmpty {
-		let pick = pickPath(paths: &frontier)
+		let pick = BFS.pickPath(paths: &frontier)
 
 		guard !hasGoal(solution: query, path: pick) else { return pick }
 
@@ -71,15 +83,41 @@ let nodeA = Node(contents: "a")
 let nodeB = Node(contents: "b")
 let nodeC = Node(contents: "c")
 let nodeD = Node(contents: "d")
+let nodeE = Node(contents: "e")
+let nodeF = Node(contents: "f")
+let nodeG = Node(contents: "g")
+let nodeH = Node(contents: "h")
+let nodeI = Node(contents: "i")
+let nodeJ = Node(contents: "j")
+let nodeK = Node(contents: "k")
 
+// Node A children
 nodeA.children.append(nodeB)
 nodeA.children.append(nodeC)
-nodeC.children.append(nodeD)
+nodeA.children.append(nodeD)
+
+// Node B children
+nodeB.children.append(nodeE)
+nodeB.children.append(nodeF)
+
+// Node C children
+nodeC.children.append(nodeG)
+nodeC.children.append(nodeH)
+nodeC.children.append(nodeI)
+
+// Node D children
+nodeD.children.append(nodeJ)
+
+// Node J children
+nodeJ.children.append(nodeK)
+nodeJ.children.append(nodeG)
 
 let pathAToA = search(query: "a", startingNode: nodeA)
 let pathAToD = search(query: "d", startingNode: nodeA)
+let pathAToG = search(query: "g", startingNode: nodeA)
 let pathAToZ = search(query: "z", startingNode: nodeA)
 
 printer(path: pathAToA)
 printer(path: pathAToD)
+printer(path: pathAToG)
 printer(path: pathAToZ)
